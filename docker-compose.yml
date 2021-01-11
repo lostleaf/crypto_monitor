@@ -1,0 +1,13 @@
+version: '2'
+services:
+  grafana:
+    ports:
+      - "19077:3000"
+    restart: always
+    image: "grafana/grafana:7.3.6"
+    environment:
+      - GF_INSTALL_PLUGINS=grafana-simple-json-datasource
+    volumes:
+      - ./grafana/data:/var/lib/grafana
+      # - ./grafana/grafana.ini:/etc/grafana/grafana.ini
+    user: root
