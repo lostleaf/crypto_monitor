@@ -1,0 +1,4 @@
+grafana/
+.vscode/
+data/
+*.pyc
