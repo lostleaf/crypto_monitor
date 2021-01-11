@@ -1,4 +1,4 @@
-#Crypto Monitor
+# Crypto Monitor
 
 Monitoring crypto accounts
 
