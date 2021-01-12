@@ -1,4 +1,4 @@
-version: '2'
+version: "2"
 services:
   grafana:
     ports:
@@ -11,3 +11,11 @@ services:
       - ./grafana/data:/var/lib/grafana
       # - ./grafana/grafana.ini:/etc/grafana/grafana.ini
     user: root
+  backend:
+    restart: always
+    build: scripts
+    environment:
+      - GRAFANA_DATA_DIR=/grafana_data
+      - TZ=Asia/Shanghai
+    volumes:
+      - /home/lostleaf/monitor_data:/grafana_data

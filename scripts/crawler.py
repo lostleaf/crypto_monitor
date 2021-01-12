@@ -13,6 +13,7 @@ import pandas as pd
 from utils import retry_getter
 import crawler_workers
 
+GRAFANA_DATA_DIR = os.getenv('GRAFANA_DATA_DIR')
 
 def get_prices():
     # Should be enough for now
@@ -37,7 +38,7 @@ def value(df_acc, df_prices):
     return df_acc[df_acc['value_usd'] > 0.01]
 
 
-def work(secret_file, output_dir):
+def work(secret_file):
     with open(secret_file) as fin:
         secrets = json.load(fin)
 
@@ -60,7 +61,7 @@ def work(secret_file, output_dir):
     df_futures = pd.concat(df_futures_list).set_index(['exchange', 'account', 'type']).reset_index()
     df_futures = value(df_futures, df_prices).reset_index(drop=True)
 
-    output_dir = os.path.join(output_dir, f'account_{datetime.now().strftime("%Y%m%d-%H%M%S")}')
+    output_dir = os.path.join(GRAFANA_DATA_DIR, f'account_{datetime.now().strftime("%Y%m%d-%H%M%S")}')
     if os.path.exists(output_dir):
         shutil.rmtree(output_dir)
     os.makedirs(output_dir, exist_ok=True)
