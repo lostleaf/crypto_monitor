@@ -23,7 +23,18 @@ def get_prices():
     df_ticker['currency'] = df_ticker['instrument_id'].str.split('-').str[0]
     df_ticker.set_index('currency', inplace=True)
     df_ticker = df_ticker.append(pd.Series({'last': 1}, name='USDT'))
+    df_ticker = df_ticker.append(pd.Series({'last': 1}, name='USD'))
     df_ticker['last'] = df_ticker['last'].astype('float')
+
+    exg = ccxt.huobipro()
+    df_ticker_hb = pd.DataFrame(retry_getter(exg.market_get_tickers, 1)['data'])
+    df_ticker_hb = df_ticker_hb[df_ticker_hb['symbol'].str.endswith('usdt')]
+    df_ticker_hb['currency'] = df_ticker_hb['symbol'].str[:-4].str.upper()
+    df_ticker_hb['close'] = df_ticker_hb['close'].astype('float')
+    df_ticker_hb.rename(columns={'close': 'last'}, inplace=True)
+    df_ticker_hb = df_ticker_hb[['currency', 'last']].set_index('currency')
+
+    df_ticker = pd.concat([df_ticker, df_ticker_hb]).groupby(level='currency').mean()
     return df_ticker[['last']]
 
 

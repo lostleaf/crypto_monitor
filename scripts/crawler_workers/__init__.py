@@ -1,1 +1,1 @@
-from . import okex
+from . import binance, huobi, okex, coinbasepro
