@@ -32,9 +32,24 @@ def read_futures():
     return utils.df_table(df_futures)
 
 
-def total():
+def account_agg():
     df_spot, df_futures = _get_latest()
     df = pd.concat([df_spot[['exchange', 'account', 'value_usd']], df_futures[['exchange', 'account', 'value_usd']]])
     df = df.groupby(['exchange', 'account'], as_index=False).sum()
     df['value_hkd'] = df['value_usd'] * 7.8
     return utils.df_table(df)
+
+
+def account_total():
+    df_spot, df_futures = _get_latest()
+    total_usd = df_spot['value_usd'].sum() + df_futures['value_usd'].sum()
+    total_hkd = total_usd * 7.8
+    return {
+        "columns": [{
+            'text': 'value_usd'
+        }, {
+            'text': 'value_hkd'
+        }],
+        "rows": [[total_usd, total_hkd]],
+        "type": "table"
+    }

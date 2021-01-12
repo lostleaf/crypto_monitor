@@ -1,3 +1,5 @@
+from inspect import getmembers, isfunction
+
 from flask import Flask, jsonify, request
 from flask_compress import Compress
 
@@ -29,23 +31,7 @@ def search():
     print_request(request)
     req = request.get_json()
 
-    # target = req.get('target', '*')
-    # if target == '':
-    #     target = '*'
-
-    # if ':' in target:
-    #     finder, target = target.split(':', 1)
-    # else:
-    #     finder = target
-
-    # print('finder =', finder, 'target =', target)
-
-    # if not target or finder not in ROUTE:
-    #     results = list(ROUTE.keys()) if target == '*' else []
-    # else:
-    #     results = list(ROUTE[finder](target))
-
-    return jsonify([])
+    return jsonify([n for n, _ in getmembers(apis, isfunction) if n[0] != '_'])
 
 
 @app.route('/query', methods=_METHODS)
