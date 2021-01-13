@@ -9,4 +9,5 @@ def get_account(secret):
     df_spot = pd.DataFrame(retry_getter(exg.private_get_accounts, 1))
     df_spot['balance'] = df_spot['balance'].astype('float')
     return df_spot[['currency', 'balance']], \
-        pd.DataFrame(columns=['type', 'currency', 'underlying', 'equity', 'margin_ratio'])
+        pd.DataFrame(columns=['type', 'currency', 'underlying', 'equity', 'margin_ratio']), \
+        pd.DataFrame(columns=['instrument_id', 'last', 'qty', 'avg_cost', 'pnl_ratio', 'pnl'])

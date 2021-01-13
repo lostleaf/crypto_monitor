@@ -38,4 +38,28 @@ def get_account(secret):
     df_swap['type'] = 'swap'
     df_futures = pd.concat([df_futures, df_swap])
 
-    return df_spot, df_futures
+    position_info = exg.futures_get_position()['holding']
+    df_pos = pd.DataFrame(sum(position_info, []), dtype=float)
+
+    if not df_pos.empty:
+        df_long = df_pos[['instrument_id', 'last', 'long_qty', 'long_avg_cost', 'long_pnl_ratio', 'long_pnl']]
+        df_long = df_long.rename(columns={
+            'long_qty': 'qty',
+            'long_avg_cost': 'avg_cost',
+            'long_pnl_ratio': 'pnl_ratio',
+            'long_pnl': 'pnl'
+        })
+        df_short = df_pos[['instrument_id', 'last', 'short_qty', 'short_avg_cost', 'short_pnl_ratio', 'short_pnl']]
+        df_short = df_short.rename(columns={
+            'short_qty': 'qty',
+            'short_avg_cost': 'avg_cost',
+            'short_pnl_ratio': 'pnl_ratio',
+            'short_pnl': 'pnl'
+        })
+        df_short['qty'] = -df_short['qty']
+        df_pos = pd.concat([df_long, df_short])
+        df_pos = df_pos[df_pos['qty'] != 0]
+    else:
+        df_pos = pd.DataFrame(columns=['instrument_id', 'last', 'qty', 'avg_cost', 'pnl_ratio', 'pnl'])
+
+    return df_spot, df_futures, df_pos

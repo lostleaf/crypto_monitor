@@ -16,4 +16,6 @@ def get_account(secret):
     df_spot['balance'] = df_spot['balance'].astype('float')
     df_spot = df_spot[df_spot['balance'] > 0].groupby('currency', as_index=False)[['balance']].sum()
     df_spot['currency'] = df_spot['currency'].str.upper()
-    return df_spot, pd.DataFrame(columns=['type', 'currency', 'underlying', 'equity', 'margin_ratio'])
+    return df_spot, \
+        pd.DataFrame(columns=['type', 'currency', 'underlying', 'equity', 'margin_ratio']), \
+        pd.DataFrame(columns=['instrument_id', 'last', 'qty', 'avg_cost', 'pnl_ratio', 'pnl'])

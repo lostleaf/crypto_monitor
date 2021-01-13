@@ -57,20 +57,23 @@ def work(secret_file):
 
     df_spot_list = []
     df_futures_list = []
+    df_pos_list = []
     for exchange_name, accounts in secrets.items():
         for account_name, secret in accounts.items():
-            df_spot, df_futures = getattr(crawler_workers, exchange_name).get_account(secret)
-            df_spot['exchange'] = exchange_name
-            df_spot['account'] = account_name
-            df_futures['exchange'] = exchange_name
-            df_futures['account'] = account_name
+            dfs = getattr(crawler_workers, exchange_name).get_account(secret)
+            for df in dfs:
+                df['exchange'] = exchange_name
+                df['account'] = account_name
+            df_spot, df_futures, df_pos = dfs
             df_spot_list.append(df_spot)
             df_futures_list.append(df_futures)
+            df_pos_list.append(df_pos)
 
     df_spot = pd.concat(df_spot_list).set_index(['exchange', 'account']).reset_index()
     df_spot = value(df_spot, df_prices).reset_index(drop=True)
     df_futures = pd.concat(df_futures_list).set_index(['exchange', 'account', 'type']).reset_index()
     df_futures = value(df_futures, df_prices).reset_index(drop=True)
+    df_pos = pd.concat(df_pos_list).set_index(['exchange', 'account']).reset_index()
 
     output_dir = os.path.join(GRAFANA_DATA_DIR, f'account_{datetime.now().strftime("%Y%m%d-%H%M%S")}')
     if os.path.exists(output_dir):
@@ -78,6 +81,7 @@ def work(secret_file):
     os.makedirs(output_dir, exist_ok=True)
     df_spot.to_pickle(os.path.join(output_dir, 'spot.pkl.xz'))
     df_futures.to_pickle(os.path.join(output_dir, 'futures.pkl.xz'))
+    df_pos.to_pickle(os.path.join(output_dir, 'pos.pkl.xz'))
 
 
 if __name__ == "__main__":
