@@ -55,7 +55,7 @@ def work(secret_file):
     if os.path.exists(path):
         df_ori = pd.read_pickle(path)
         df_futures_order = update_dataframe(df_ori, df_futures_order, 'order_id')
-    df_futures_order = df_futures_order.sort_values('timestamp', ascending=False).reset_index()
+    df_futures_order = df_futures_order.sort_values('timestamp', ascending=False).reset_index(drop=True)
     df_futures_order.to_pickle(path)
 
 
