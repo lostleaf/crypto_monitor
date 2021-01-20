@@ -9,7 +9,7 @@ services:
       - GF_INSTALL_PLUGINS=grafana-simple-json-datasource
     volumes:
       - ./grafana/data:/var/lib/grafana
-      # - ./grafana/grafana.ini:/etc/grafana/grafana.ini
+      - ./grafana/grafana.ini:/etc/grafana/grafana.ini
     user: root
   backend:
     restart: always
