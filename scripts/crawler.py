@@ -46,7 +46,7 @@ def value(df_acc, df_prices):
         col = 'equity'
     df_acc['value_usd'] = df_acc['last'] * df_acc[col]
     df_acc.drop(columns='last', inplace=True)
-    return df_acc[df_acc['value_usd'] > 0.01]
+    return df_acc[df_acc['value_usd'].abs() > 0.01]
 
 
 def work(secret_file):
