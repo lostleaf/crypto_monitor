@@ -54,6 +54,7 @@ def get_swap_account(secret):
         'margin_balance': 'equity',
         'risk_rate': 'margin_ratio'
     }, inplace=True)
+    df['margin_ratio'].fillna(10000, inplace=True)
     return df[['type', 'currency', 'underlying', 'equity', 'margin_ratio']]
 
 def get_account(secret):
@@ -69,5 +70,6 @@ def get_account(secret):
     df_spot = pd.concat(dfs)
     df_spot = df_spot[df_spot['balance'].abs() > 0].groupby('currency', as_index=False)[['balance']].sum()
     df_spot['currency'] = df_spot['currency'].str.upper()
-    return df_spot, get_swap_account(secret), \
+    df_futures = get_swap_account(secret)
+    return df_spot, df_futures, \
         pd.DataFrame(columns=['instrument_id', 'last', 'qty', 'avg_cost', 'pnl_ratio', 'pnl'])
