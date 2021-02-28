@@ -34,7 +34,15 @@ def get_prices():
     df_ticker_hb.rename(columns={'close': 'last'}, inplace=True)
     df_ticker_hb = df_ticker_hb[['currency', 'last']].set_index('currency')
 
-    df_ticker = pd.concat([df_ticker, df_ticker_hb]).groupby(level='currency').mean()
+    exg = ccxt.binance()
+    df_ticker_binance = pd.DataFrame(retry_getter(exg.publicGetTicker24hr, 1))
+    df_ticker_binance = df_ticker_binance[df_ticker_binance['symbol'].str.endswith('USDT')]
+    df_ticker_binance['currency'] = df_ticker_binance['symbol'].str[:-4].str.upper()
+    df_ticker_binance['last'] = df_ticker_binance['lastPrice'].astype('float')
+    df_ticker_binance = df_ticker_binance[['currency', 'last']].set_index('currency')
+    print(df_ticker_binance)
+
+    df_ticker = pd.concat([df_ticker, df_ticker_hb, df_ticker_binance]).groupby(level='currency').mean()
     return df_ticker[['last']]
 
 
