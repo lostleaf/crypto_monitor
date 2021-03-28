@@ -6,10 +6,11 @@ services:
     restart: always
     image: "grafana/grafana:7.3.6"
     environment:
-      - GF_INSTALL_PLUGINS=grafana-simple-json-datasource
+      - GF_INSTALL_PLUGINS=grafana-simple-json-datasource,frser-sqlite-datasource
     volumes:
       - ./grafana/data:/var/lib/grafana
       - ./grafana/grafana.ini:/etc/grafana/grafana.ini
+      - /home/lostleaf/crypto_data:/crypto_data
     user: root
   backend:
     restart: always
